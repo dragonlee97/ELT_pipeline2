@@ -1,0 +1,39 @@
+version: "3.8"
+
+x-minio-common: &minio-common
+  environment:
+    MINIO_ROOT_USER: minio
+    MINIO_ROOT_PASSWORD: password
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio-container
+    ports:
+      - 9000:9000
+      - 9001:9001
+    <<: *minio-common
+    command: 'minio server /data --console-address ":9001"'
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mc:
+    image: minio/mc:latest
+    container_name: minio-init
+    <<: *minio-common
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: on-failure
+    volumes:
+      - ./companies:/tmp/companies
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set meero-minio http://minio-container:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      /usr/bin/mc mb meero-minio/companies;
+      /usr/bin/mc anonymous set public meero-minio/companies;
+      /usr/bin/mc cp --recursive /tmp/companies meero-minio/
+      "
