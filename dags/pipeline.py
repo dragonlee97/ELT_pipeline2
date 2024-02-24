@@ -68,16 +68,9 @@ with dag:
         task_id="temp_to_final_table",
         project_id=GCP_PROJECT_ID,
         configuration={
-            "query": {
-                "query": "{% include 'sql/create_and_merge.sql' %}",
-                "useLegacySql": False,
-                "priority": "BATCH",
-            }
+            "query": {"query": "{% include 'sql/create_and_merge.sql' %}", "useLegacySql": False, "priority": "BATCH",}
         },
-        params={
-            "target_table": FINAL_TABLE,
-            "source_table": TEMP_TABLE,
-        },
+        params={"target_table": FINAL_TABLE, "source_table": TEMP_TABLE,},
     )
 
     latest_only >> api_to_gcs >> load_to_temp_bq >> temp_to_final_table

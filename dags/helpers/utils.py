@@ -23,7 +23,11 @@ def extract_from_api_upload_to_gcs(gcs_bucket, ds, ds_nodash, **kwargs):
     bucket = storage.Client().get_bucket(gcs_bucket)
     blob = bucket.blob(file_path)
     blob_writer = BlobWriter(blob)
-    EXPORT_QUERY = "/jsonl?where=updated_date%3Ddate%27" + ds + "%27&limit=-1&refine=column_19%3A%22France%22&timezone=UTC&use_labels=false&epsg=4326"
+    EXPORT_QUERY = (
+        "/jsonl?where=updated_date%3Ddate%27"
+        + ds
+        + "%27&limit=-1&refine=column_19%3A%22France%22&timezone=UTC&use_labels=false&epsg=4326"
+    )
     try:
         session = requests.Session()
         session.mount(BASE_URL, HTTPAdapter(max_retries=API_MAX_RETRIES))
@@ -31,8 +35,8 @@ def extract_from_api_upload_to_gcs(gcs_bucket, ds, ds_nodash, **kwargs):
             response.raise_for_status()
             logging.info("Successfully got response from API.")
             # Avoid reading the content at once into memory for large responses.
-            for chunk in response.iter_lines(chunk_size=256*1000, decode_unicode=True, delimiter="\n"):
-                blob_writer.write.write(chunk+"\n")
+            for chunk in response.iter_lines(chunk_size=256 * 1000, decode_unicode=True, delimiter="\n"):
+                blob_writer.write.write(chunk + "\n")
     except requests.exceptions.Timeout as e:
         logging.error(f"Timeout Error after {str(API_MAX_RETRIES * TIMEOUT)} seconds: {e}")
         raise Exception
