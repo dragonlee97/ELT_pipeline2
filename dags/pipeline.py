@@ -92,10 +92,6 @@ with dag:
         schema_fields=json.load(
             open("{}/schema/companies_raw.json".format(dag_folder))
         ),
-        # time_partitioning={
-        #     "type": "DAY",
-        #     "field": "created_at"
-        # },
         if_exists="ignore",
     )
 
@@ -129,7 +125,7 @@ with dag:
         },
     )
 
-    # Transformation Use dbt materialization to skip this creation task
+    # Create dataset and table using DDL queries. Use dbt materialization can help skip this creation task
     create_monitoring_datamart_if_not_exists = BigQueryInsertJobOperator(
         task_id="create_monitoring_datamart_if_not_exists",
         trigger_rule=TriggerRule.NONE_FAILED,
@@ -146,6 +142,7 @@ with dag:
         },
     )
 
+    # DML SQL to populate the monitoring datamart
     compute_final_datamart = BigQueryInsertJobOperator(
         task_id="compute_final_datamart",
         project_id=params["GCP_PROJECT_ID"],

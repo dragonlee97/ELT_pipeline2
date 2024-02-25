@@ -1,9 +1,9 @@
 {
   "MINIO_BUCKET": "companies",
-  "GCP_PROJECT_ID": "united-yeti-379010",
-  "GCP_RAW_DATASET": "raw",
-  "GCP_DATAMART_DATASET": "datamart",
-  "GCS_BUCKET": "delong-meero-test",
+  "GCP_PROJECT_ID": "<>",
+  "GCP_RAW_DATASET": "<>",
+  "GCP_DATAMART_DATASET": "<>",
+  "GCS_BUCKET": "<>",
   "COMPANIES_TEMP_TABLE": "<GCP_PROJECT_ID>.<GCP_RAW_DATASET>.temp_companies",
   "COMPANIES_RAW_TABLE": "<GCP_PROJECT_ID>.<GCP_RAW_DATASET>.companies",
   "AIRBNB_LISTINGS_RAW_TABLE": "<GCP_PROJECT_ID>.<GCP_RAW_DATASET>.airbnb_listings",
