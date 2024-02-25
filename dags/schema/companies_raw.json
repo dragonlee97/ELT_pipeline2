@@ -1,0 +1,32 @@
+[
+  {
+    "mode": "Required",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "address",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "city",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "zip",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "created_at",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "updated_at",
+    "type": "DATE"
+  }
+]

@@ -1,0 +1,20 @@
+ARG AIRFLOW_VERSION=2.5.3
+ARG PYTHON_VERSION=3.9
+
+FROM apache/airflow:${AIRFLOW_VERSION}-python${PYTHON_VERSION}
+
+ARG AIRFLOW_VERSION
+ARG PYTHON_VERSION
+
+ENV AIRFLOW_VERSION=${AIRFLOW_VERSION} \
+    PYTHON_VERSION=${PYTHON_VERSION}
+
+USER airflow
+
+WORKDIR /elt-examples
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . ./

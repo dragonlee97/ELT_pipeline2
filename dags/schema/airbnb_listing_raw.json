@@ -1,0 +1,92 @@
+[
+  {
+    "mode": "Required",
+    "name": "id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "name",
+    "type": "STRING"
+  },
+  {
+    "mode": "Required",
+    "name": "host_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "neighbourhood",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "room_type",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "minimum_nights",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "number_of_reviews",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "last_review",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "reviews_per_month",
+    "type": "FLOAT"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "calculated_host_listings_count",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "availability_365",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "updated_date",
+    "type": "DATE"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "city",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "column_19",
+    "type": "STRING"
+  },
+  {
+    "fields": [
+      {
+        "type":"FLOAT",
+        "name":"lon"
+      },
+      {
+        "type":"FLOAT",
+        "name":"lat"
+      }
+    ],
+    "mode": "NULLABLE",
+    "name": "coordinates",
+    "type": "RECORD"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "column_20",
+    "type": "STRING"
+  }
+]

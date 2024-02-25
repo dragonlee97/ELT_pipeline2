@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "city",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "nb_listings",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "nb_customers",
+    "type": "INTEGER"
+  }
+]

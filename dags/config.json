@@ -1,0 +1,11 @@
+{
+  "MINIO_BUCKET": "companies",
+  "GCP_PROJECT_ID": "united-yeti-379010",
+  "GCP_RAW_DATASET": "raw",
+  "GCP_DATAMART_DATASET": "datamart",
+  "GCS_BUCKET": "delong-meero-test",
+  "COMPANIES_TEMP_TABLE": "united-yeti-379010.raw.temp_companies",
+  "COMPANIES_RAW_TABLE": "united-yeti-379010.raw.companies",
+  "AIRBNB_LISTINGS_RAW_TABLE": "united-yeti-379010.raw.airbnb_listings",
+  "FINAL_DATAMART_TABLE": "united-yeti-379010.datamart.monitoring"
+}
