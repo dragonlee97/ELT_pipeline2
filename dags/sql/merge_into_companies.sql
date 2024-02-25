@@ -9,7 +9,7 @@ WHEN MATCHED THEN
     Target.address = Source.address,
     Target.city = Source.city,
     Target.zip = SAFE_CAST(Source.zip AS STRING),
-    Target.updated_at = CURRENT_DATE()
+    Target.updated_at = Source.created_at
 
 -- Inserts
 WHEN NOT MATCHED BY Target THEN

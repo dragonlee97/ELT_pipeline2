@@ -2,19 +2,19 @@ import json
 import os
 from datetime import datetime, timedelta
 
-from google.cloud import bigquery
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
-from airflow.operators.python import PythonOperator
-from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
-    GCSToBigQueryOperator,
-)
+from airflow.operators.python import BranchPythonOperator, PythonOperator
 from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateEmptyDatasetOperator,
     BigQueryCreateEmptyTableOperator,
     BigQueryInsertJobOperator,
 )
-
+from airflow.providers.google.cloud.transfers.gcs_to_bigquery import (
+    GCSToBigQueryOperator,
+)
+from airflow.utils.trigger_rule import TriggerRule
+from google.cloud import bigquery
 
 from helpers.utils import (
     extract_from_api_upload_to_gcs,
@@ -71,7 +71,8 @@ with dag:
         task_id="load_airbnb_listings_to_bq",
         gcp_conn_id="google_cloud_default",
         bucket=params["GCS_BUCKET"],
-        source_objects=["{{ ti.xcom_pull('airbnb_listings_to_gcs') }}"],
+        source_objects=["20240103/airbnb_listings.json"],
+        # source_objects=["{{ ti.xcom_pull('airbnb_listings_to_gcs') }}"],
         destination_project_dataset_table=params["AIRBNB_LISTINGS_RAW_TABLE"],
         write_disposition="WRITE_TRUNCATE",
         source_format="NEWLINE_DELIMITED_JSON",
@@ -91,15 +92,15 @@ with dag:
         schema_fields=json.load(
             open("{}/schema/companies_raw.json".format(dag_folder))
         ),
-        time_partitioning={
-            "type": "DAY",
-            "field": "created_at"
-        },
+        # time_partitioning={
+        #     "type": "DAY",
+        #     "field": "created_at"
+        # },
         if_exists="ignore",
     )
 
-    # Load today's csv file to a staging table, ready for updating raw source table
-    companies_to_temp_bigquery = PythonOperator(
+    # Load today's csv file to a staging table, ready for updating raw source table. If there is no csv today, go to datamart tasks directly
+    companies_to_temp_bigquery = BranchPythonOperator(
         task_id="companies_to_temp_bigquery",
         python_callable=read_from_minio_load_to_temp_table,
         op_kwargs={
@@ -131,6 +132,7 @@ with dag:
     # Transformation Use dbt materialization to skip this creation task
     create_monitoring_datamart_if_not_exists = BigQueryInsertJobOperator(
         task_id="create_monitoring_datamart_if_not_exists",
+        trigger_rule=TriggerRule.NONE_FAILED,
         project_id=params["GCP_PROJECT_ID"],
         configuration={
             "query": {
@@ -171,8 +173,12 @@ with dag:
         create_companies_table_if_not_exists,
     ]
     airbnb_listings_to_gcs >> load_airbnb_listings_to_bq
-    create_companies_table_if_not_exists >> companies_to_temp_bigquery >> load_temp_companies_to_bq
+    create_companies_table_if_not_exists >> companies_to_temp_bigquery >> [
+        load_temp_companies_to_bq,
+        create_monitoring_datamart_if_not_exists,
+    ]
     [
+        companies_to_temp_bigquery,
         load_airbnb_listings_to_bq,
         load_temp_companies_to_bq,
     ] >> create_monitoring_datamart_if_not_exists >> compute_final_datamart
