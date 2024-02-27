@@ -44,7 +44,7 @@ def extract_from_api_upload_to_gcs(gcs_bucket, ds_nodash, **kwargs):
             response.raise_for_status()
             logging.info("Successfully got response from API.")
             # Avoid reading the content at once into memory for large responses.
-            for chunk in response.iter_content(chunk_size=256 * 1000):
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
                 blob_writer.write(chunk)
     except requests.exceptions.Timeout as e:
         logging.error(
@@ -57,8 +57,8 @@ def extract_from_api_upload_to_gcs(gcs_bucket, ds_nodash, **kwargs):
     except requests.exceptions.RequestException as e:
         logging.error("RequestException: %s", e)
         raise Exception
-
-    blob_writer.close()
+    finally:
+        blob_writer.close()
     return file_path
 
 
@@ -97,9 +97,9 @@ def read_from_minio_load_to_temp_table(
     except urllib3.exceptions.HTTPError as e:
         logging.error("Request failed: %s", e.reason)
         raise Exception
-
-    response.close()
-    response.release_conn()
+    finally:
+        response.close()
+        response.release_conn()
 
     # data validation before loading to bigquery: id should be unique and created_at should equal to execution_date
     if not df["id"].is_unique:
