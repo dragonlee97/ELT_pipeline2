@@ -97,9 +97,9 @@ def read_from_minio_load_to_temp_table(
     except urllib3.exceptions.HTTPError as e:
         logging.error("Request failed: %s", e.reason)
         raise Exception
-    finally:
-        response.close()
-        response.release_conn()
+
+    response.close()
+    response.release_conn()
 
     # data validation before loading to bigquery: id should be unique and created_at should equal to execution_date
     if not df["id"].is_unique:
